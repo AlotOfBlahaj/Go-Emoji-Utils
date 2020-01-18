@@ -3,13 +3,12 @@ package emoji
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path"
-	"runtime"
-	"strings"
-
 	"github.com/tmdvs/Go-Emoji-Utils/utils"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strings"
 )
 
 // Emoji - Struct representing Emoji
@@ -22,16 +21,28 @@ type Emoji struct {
 // Emojis - Map of Emoji Runes as Hex keys to their description
 var Emojis map[string]Emoji
 
+func downloadEmoji() {
+	fmt.Println("Updating Emoji Definition using Emojipedia…")
+
+	// Grab the latest Apple Emoji Definitions
+	res, err := http.Get("https://raw.githubusercontent.com/tmdvs/Go-Emoji-Utils/master/data/emoji.json")
+	if err != nil {
+		panic(err)
+	}
+	defer res.Body.Close()
+	jsonFile, _ := ioutil.ReadAll(res.Body)
+	f, _ := os.OpenFile("emoji.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	io.WriteString(f, string(jsonFile))
+}
+
 // Unmarshal the emoji JSON into the Emojis map
 func init() {
-	// Work out where we are in relation to the caller
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		panic("No caller information")
-	}
 
 	// Open the Emoji definition JSON and Unmarshal into map
-	jsonFile, err := os.Open(path.Dir(filename) + "/data/emoji.json")
+	if _, err := os.Stat("emoji.json"); err != nil {
+		downloadEmoji()
+	}
+	jsonFile, err := os.Open("emoji.json")
 	defer jsonFile.Close()
 	if err != nil {
 		fmt.Println(err)
