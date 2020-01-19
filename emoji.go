@@ -3,7 +3,7 @@ package emoji
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tmdvs/Go-Emoji-Utils/utils"
+	"github.com/fzxiao233/Go-Emoji-Utils/utils"
 	"io"
 	"io/ioutil"
 	"net/http"
