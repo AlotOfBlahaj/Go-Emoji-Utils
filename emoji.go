@@ -25,9 +25,9 @@ func downloadEmoji() {
 	fmt.Println("Updating Emoji Definition using Emojipedia…")
 
 	// Grab the latest Apple Emoji Definitions
-	res, err := http.Get("https://raw.githubusercontent.com/tmdvs/Go-Emoji-Utils/master/data/emoji.json")
+	res, err := http.Get("https://raw.githubusercontent.com/fzxiao233/Go-Emoji-Utils/master/data/emoji.json")
 	if err != nil {
-		panic(err)
+		panic("Upload Emoji Definition Error Please Check your network")
 	}
 	defer res.Body.Close()
 	jsonFile, _ := ioutil.ReadAll(res.Body)
